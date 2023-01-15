@@ -1,0 +1,130 @@
+@import '_variables.scss';
+
+.vs {
+  display: flex;
+
+
+  .side {
+    flex:1;
+    display: flex;
+    flex-flow: column;
+    max-width: 50vh;
+  }
+
+
+  .board {
+    flex: 3;
+  }
+
+  .replay {
+    flex: 2;
+    max-width: 50vh;
+  }
+}
+
+.board {
+
+  margin: 1em;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+
+  .chessboard {
+    background: url(/vendor/chessboard23/blue3.jpg);
+    background-size: cover;
+    position: relative;
+    border-radius: 4px;
+    aspect-ratio: 1/1;
+    border: 2px solid $gray;
+    max-width: 80vh;
+
+
+    .files {
+      .file:nth-child(even) {
+        color: $blue;
+      }
+    }
+    .ranks {
+
+      .rank:nth-child(even) {
+        color: $blue;
+      }
+    }
+
+    .piese.ghost {
+      opacity: 0.2;
+    }
+  }
+}
+
+.info {
+  padding: 0.6em;
+  border: 1px solid $light;
+  border-radius: 1px;
+  div {
+    color: $light;
+    font-size: 0.96em;
+  }
+}
+
+
+.replay {
+
+  .action-bar {
+    padding: 0.2em;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    
+    .title {
+      color: $gray;
+    }
+  }
+
+  .status-bar {
+    padding: 0.2em;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+
+  }
+
+  .controls {
+    display: flex;
+    justify-content: center;
+    gap: 1em;
+
+    background: $dark;
+    border: 1px solid $gray;
+    padding: 0.2em;
+  }
+}
+
+.timer {
+
+  display: flex;
+  width: 100%;
+  flex-flow: column;
+  align-items: center;
+
+  .timeformat {
+    display: flex;
+    align-items: center;
+  }
+
+  .timebar {
+    display: flex;
+    height: 8px;
+    width: 100%;
+    background: $blue;
+    border-radius: 2px;
+
+    .bar {
+      border-radius: 2px;
+      height: 100%;
+      background: $lightblue;
+    }
+  }
+}

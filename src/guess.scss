@@ -1,0 +1,67 @@
+@import '_variables';
+
+.guess {
+
+  display: flex;
+  flex-flow: column;
+
+  .app {
+    display: flex;
+
+
+    .controls {
+      max-width: 300px;
+      flex: 1;
+      display: flex;
+      flex-flow: column;
+    }
+  }
+}
+
+.controls {
+  align-items: center;
+  input {
+    width: 100%;
+    height: 2em;
+  }
+}
+
+.board {
+  width: 70vw;
+  max-width: 70vh;
+  min-width: 30vh;
+
+  margin: 1em;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+
+  .chessboard {
+    background: url(/vendor/chessboard23/blue3.jpg);
+    background-size: cover;
+    position: relative;
+    border-radius: 4px;
+    aspect-ratio: 1/1;
+    border: 2px solid $gray;
+    max-width: 80vh;
+
+
+    .files {
+      .file:nth-child(even) {
+        color: $blue;
+      }
+    }
+    .ranks {
+
+      .rank:nth-child(even) {
+        color: $blue;
+      }
+    }
+
+    .piese.ghost {
+      opacity: 0.2;
+    }
+  }
+}
+
+
