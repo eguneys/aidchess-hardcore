@@ -13,9 +13,9 @@ export type Memo<T> = () => T
 export default () => {
 
   let [game_over, set_game_over] = createSignal(false)
-
+    //let kga = ['e2e4', 'e7e5', 'f2f4', 'e5f4', 'g1f3', 'g7g5', 'h2h4', 'g5g4']
   let $replay_ref: HTMLDivElement;
-  let [moves, setMoves] = createSignal<string[]>(['e2e4', 'e7e5', 'f2f4', 'e5f4', 'g1f3', 'g7g5', 'h2h4', 'g5g4'], { equals: false })
+  let [moves, setMoves] = createSignal<string[]>([], { equals: false })
   let [ai_played, set_ai_played] = createSignal(false)
 
 
