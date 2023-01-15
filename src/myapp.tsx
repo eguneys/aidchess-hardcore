@@ -1,5 +1,5 @@
 import { createSignal, createEffect, on } from 'solid-js'
-import { useNavigate, Router, Routes, Route, A} from '@solidjs/router'
+import { hashIntegration, useNavigate, Router, Routes, Route, A} from '@solidjs/router'
 import { lazy } from 'solid-js'
 import { Socket, generic_handlers } from './socket'
 import { MetaProvider } from '@solidjs/meta'
@@ -12,7 +12,7 @@ type Redirect = { redirect: string }
 
 export const MyApp = () => {
   return (<>
-      <Router>
+      <Router source={hashIntegration()}>
         <MetaProvider>
           <AppInRouter/>
         </MetaProvider>
