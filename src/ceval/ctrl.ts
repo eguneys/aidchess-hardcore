@@ -130,7 +130,6 @@ export default class CevalCtrl {
         work.moves.push(s.uci!)
       }
     }
-
     if (!this.worker) {
 
       this.worker = new ThreadedWasmWorker({

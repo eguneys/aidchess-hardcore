@@ -15,27 +15,31 @@ export default () => {
   let [game_over, set_game_over] = createSignal(false)
 
   let $replay_ref: HTMLDivElement;
-  let [moves, setMoves] = createSignal<string[]>([], { equals: false })
+  let [moves, setMoves] = createSignal<string[]>(['e2e4', 'e7e5', 'f2f4', 'e5f4', 'g1f3', 'g7g5', 'h2h4', 'g5g4'], { equals: false })
   let [ai_played, set_ai_played] = createSignal(false)
 
 
   let [ai_cp, set_ai_cp] = createSignal(0)
   let ceval = new CevalCtrl({
      emit(e: Tree.LocalEval) {
-       if (!ai_played() && e.depth >= 10) {
-         set_ai_played(true)
-         ceval.stop()
-         let best_move = e.pvs[0].moves[0]
+       if (!game_over() && !ai_played() && e.depth >= 10) {
+         if (fen() !== e.fen) {
+           return
+         }
+       ceval.stop()
+       set_ai_played(true)
+       let best_move = e.pvs[0].moves[0]
+       let cp = e.pvs[0].cp
 
-         setMoves(_ => { _.push(best_move); return _})
-         if ($replay_ref) {
-         $replay_ref.scrollTo(0, $replay_ref.scrollHeight)
+       if (cp) {
+           set_ai_cp(-cp/100)
          }
-         if (e.cp) {
-           set_ai_cp(-e.cp/100)
-         }
+       setMoves(_ => { _.push(best_move); return _})
+       if ($replay_ref) {
+       $replay_ref.scrollTo(0, $replay_ref.scrollHeight)
        }
-     }
+       }
+       }
       })
   let chess = new Chess()
   let initial_fen =chess.fen()
@@ -65,17 +69,24 @@ export default () => {
 
   const onUserMove = (move: string) => {
     setMoves(_ => { _.push(move); return _ })
-    set_ai_played(false)
     ceval.start('', steps())
+    set_ai_played(false)
   }
 
   createEffect(() => {
     let _ = ai_cp()
-    if (_ < -1.6) {
+    if (_ < -2.1) {
       set_game_over(true)
-    }
+      }
     })
 
+  createEffect(() => {
+   if (game_over()) {
+  if ($replay_ref) {
+         $replay_ref.scrollTo(0, $replay_ref.scrollHeight)
+         }
+         }
+         })
 
   const rematch = () => {
    
@@ -101,7 +112,7 @@ export default () => {
         <Show when={game_over()}>
         <div class='result-wrap'>
            <div class='result'>{game_score()}</div>
-           Eval dropped below 1. Game's over.
+           Eval dropped below 2. Game's over.
         </div>
         </Show>
       </div>
