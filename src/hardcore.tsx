@@ -32,7 +32,7 @@ export default () => {
          $replay_ref.scrollTo(0, $replay_ref.scrollHeight)
          }
          if (e.cp) {
-           set_ai_cp(e.cp/100)
+           set_ai_cp(-e.cp/100)
          }
        }
      }
@@ -71,7 +71,7 @@ export default () => {
 
   createEffect(() => {
     let _ = ai_cp()
-    if (Math.abs(_) > 1) {
+    if (_ < -1.6) {
       set_game_over(true)
     }
     })
