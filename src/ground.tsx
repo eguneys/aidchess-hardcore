@@ -40,7 +40,7 @@ export const Ground = (props: { glyph?: { orig: string, glyph: string }, fen: st
    }))
 
   let config = {
-    orientation: props.isBlack ? 'black': 'white',
+    orientation: (props.isBlack ? 'black': 'white') as any,
     movable: {
       free: false,
       dests

@@ -33,28 +33,22 @@
   }
 }
 
-.lobby-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
 
-  background: $lightblue;
+.challenges {
+  display: flex;
+  flex-flow: column;
+  .gray {
+    color: #222222;
+  }
 
-  li {
-    user-select: none;
+  .clear {
+    margin-top: 2em;
     cursor: pointer;
-    padding: 0.5em;
-
-    &:nth-child(even) {
-      background: $lightblue2;
-    }
+    user-select: none;
+    align-self: flex-end;
 
     &:hover {
-      background: $orange;
+      color: red;
     }
-
-
   }
 }
-
-

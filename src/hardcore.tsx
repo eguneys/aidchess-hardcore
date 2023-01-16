@@ -6,6 +6,7 @@ import { Chess } from 'chess.js'
 import { Step } from './ceval/types'
 import CevalCtrl from './ceval/ctrl'
 import { Title } from '@solidjs/meta'
+import Challenges from './challenges'
 
 const moveFixCastling = (chess: any, move: any) => {
   return chess.move(move, { sloppy: true}) || chess.move('O-O') || chess.move('O-O-O')
@@ -178,6 +179,19 @@ set_ground_glyph()
          }
          }
          })
+
+
+  createEffect(on(game_over, v => {
+        if (v) {
+        let result = {
+          moves: moves(),
+          color: isBlack ? 'black' : 'white'
+          }
+
+      Challenges.check_challenge_game(result)
+      }
+  }))
+
 
   const rematch = () => {
   
