@@ -76,7 +76,7 @@ const MainPage = () => {
               <h3> Challenges </h3>
               <For each={challenges()}>{ challenge =>
               <div>{challenge.description}
-              <Show when={Challenges.completed(challenge.key, selected_pack())} fallback={<span class='gray'> Uncompleted </span>}>{ nb =>
+              <Show keyed when={Challenges.completed(challenge.key, selected_pack())} fallback={<span class='gray'> Uncompleted </span>}>{ nb =>
                 <span class='green'> Completed {nb>1 ? `x${nb}` : ''} </span>
               }</Show>
               </div> 
