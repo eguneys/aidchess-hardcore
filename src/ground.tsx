@@ -5,17 +5,17 @@ import { Api as ChessgroundApi } from 'chessground/api'
 import { Chess } from 'chess.js'
 
 
-export const Ground = (props: { glyph?: { orig: string, glyph: string }, fen: string, isBlack?: boolean, onUserMove: (move: string) => void }) => {
+export const Ground = (props: { glyphs: { orig: string, glyph: string }[], fen: string, isBlack?: boolean, onUserMove: (move: string) => void }) => {
 
   let [mounted, set_mounted] = createSignal(undefined, { equals: false })
   let api: ChessgroundApi
 
-  createEffect(on(() => { mounted(); return props.glyph }, glyph => {
+  createEffect(on(() => { mounted(); return props.glyphs }, glyphs => {
     if (!api) {
        return
     }
-    if (glyph) {
-      api.setAutoShapes([{ orig: glyph.orig as any, customSvg: glyphToSvg[glyph.glyph] }])
+    if (glyphs) {
+      api.setAutoShapes(glyphs.map(glyph => ({ orig: glyph.orig as any, customSvg: glyphToSvg[glyph.glyph] })))
     } else {
       api.setAutoShapes([])
     }

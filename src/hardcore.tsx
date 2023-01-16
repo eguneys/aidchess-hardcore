@@ -8,6 +8,30 @@ import CevalCtrl from './ceval/ctrl'
 import { Title } from '@solidjs/meta'
 import Challenges from './challenges'
 
+const wc = (cp: number) => {
+  let M = -0.00368208
+    let res =  50 + 50 * (2/ (1 + Math.exp(-M * cp)) - 1)
+    return res
+}
+
+
+const get_glyph = (cp_delta: number) => {
+  if (Math.abs(cp_delta) < 10) {
+    return '!'
+  }
+  if (cp_delta < -30) {
+    return '??'
+  } else if (cp_delta < -20) {
+    return '?!'
+  } else if (cp_delta < -10) {
+    return '?'
+  } else {
+    return undefined
+  }
+}
+
+
+
 const moveFixCastling = (chess: any, move: any) => {
   return chess.move(move, { sloppy: true}) || chess.move('O-O') || chess.move('O-O-O')
 }
@@ -23,88 +47,124 @@ export default () => {
   const color = isBlack ? 'black' : 'white'
   const pack = { level, color }
   
+  const ai_color = color === 'white' ? 'black' : 'white'
+
+  let [chess, setChess] = createSignal(new Chess(), { equals: false })
 
   let [game_over, set_game_over] = createSignal(false)
-    //let kga = ['e2e4', 'e7e5', 'f2f4', 'e5f4', 'g1f3', 'g7g5', 'h2h4', 'g5g4']
   let $replay_ref: HTMLDivElement;
-  let [moves, setMoves] = createSignal<string[]>([], { equals: false })
-  let [ai_played, set_ai_played] = createSignal(false)
-
-
-  let [ai_cp, set_ai_cp] = createSignal(0)
-  let ceval = new CevalCtrl({
-     emit(e: Tree.LocalEval) {
-       if (!game_over() && !ai_played() && e.depth >= level) {
-         if (fen() !== e.fen) {
-           return
-         }
-
-       ceval.stop()
-       set_ai_played(true)
-       let best_move = e.pvs[0].moves[0]
-
-       if (e.cp) {
-         set_ai_cp(e.cp/100)
-       }
-       setMoves(_ => { _.push(best_move); return _})
-       if ($replay_ref) {
-       $replay_ref.scrollTo(0, $replay_ref.scrollHeight)
-       }
-       }
-       }
-      })
-  let chess = new Chess()
-  let initial_fen =chess.fen()
-
-  const fen = createMemo(() => {
-    let chess = new Chess()
-    moves().forEach(_ => moveFixCastling(chess, _))
-    return chess.fen()
-      })
   
-  const steps: Memo<Step[]> = createMemo(() => {
-      let chess = new Chess()
-      return moves().map((_, i) => { 
-          let san = moveFixCastling(chess, _)!.san
-          return {
-            ply: i,
-            fen: chess.fen(),
-            uci: _,
-            san
-            }
-            })
+  const m_turn = createMemo(() => chess().turn())
+  const m_fen = createMemo(() => chess().fen())
+  const m_pgn = createMemo(() => chess().pgn())
+  const m_steps = createMemo(() => {
+     let c = new Chess()
+     return chess().history({verbose: true}).map((_: any, i) => {
+         const move = c.move(_.san)!
+         return { 
+         ply: i,
+         fen: c.fen(),
+         uci: move.from + move.to,
+         san: move.san }})
+     })
+  const m_prev_fen = createMemo(() => {
+      let steps = m_steps()
+      if (steps.length > 1) {
+        return steps[steps.length - 2].fen
+      }
+return undefined
       })
+
+  const [evals_by_fen, set_evals_by_fen] = createSignal(new Map<string, Tree.LocalEval>(), { equals: false })
+
+  let ceval = new CevalCtrl({ 
+      emit(e: Tree.LocalEval) { 
+      if (e.depth >= level) {
+        set_evals_by_fen(_ => { _.set(e.fen, e); return _ })
+      }
+      }})
+  createEffect(on(m_steps, steps => {
+    ceval.start('', steps)
+    }))
+
+  createEffect(() => {
+      m_steps()
+      game_over()
+
+      if ($replay_ref) {
+      $replay_ref.scrollTo(0, $replay_ref.scrollHeight)
+      }
+      })
+
+  const ai_cp = (fen: string) => {
+    const e = evals_by_fen().get(fen)
+      if (!e || !e.cp) { return 0 }
+    return e.cp / 100
+  }
+  const m_ai_cp = createMemo(() => ai_cp(m_fen()))
+
+  const get_cp_delta = (fen: string, prev_fen: string) => {
+    const m_ai_cp =  ai_cp(fen)
+    const m_prev_ai_cp = ai_cp(prev_fen)
+
+    return (wc(m_ai_cp * 100) - wc(m_prev_ai_cp * 100)) * (isBlack ? - 1 : 1)
+  }
+
+  const m_ground_glyphs = createMemo(() => {
+    let steps = m_steps()
+
+    if (steps.length >= 3) {
+    let [one, two, three] = steps.slice(-3)
+
+    let glyph1 = get_glyph(get_cp_delta(two.fen, one.fen)),
+    glyph2 = get_glyph(get_cp_delta(three.fen, two.fen))
+    let res = []
+    if (glyph1) {
+      res.push({ orig: two.uci.slice(2), glyph: glyph1 })
+    }
+    if (glyph2) {
+      res.push({ orig: three.uci.slice(2), glyph: glyph2 })
+    }
+    return res
+    }
+    return []
+    })
+
+
+  function step() {
+
+    const e = evals_by_fen().get(m_fen())
+    if (e) {
+      if (m_turn() === ai_color[0]) {
+        if (e.depth >= level) {
+          let move = e.pvs[0].moves[0]
+            setChess(_ => { moveFixCastling(_, move); return _ })
+        }
+      }
+    }
+
+    setTimeout(step, 500)
+  }
+  setTimeout(step, 500)
+
+
+  createEffect(() => {
+     let ai_cp = isBlack ? m_ai_cp() : -m_ai_cp()
+     if (ai_cp < -2.1) {
+       set_game_over(true)
+     }
+     })
 
   const game_score = createMemo(() => {
-    return Math.floor(steps().length / 2)
+      return Math.floor(m_steps().length / 2)
       })
-
-  if (isBlack) {
-    ceval.start('', [])
-  }
 
   const onUserMove = (move: string) => {
-    setMoves(_ => { _.push(move); return _ })
-    ceval.start('', steps())
-    set_ai_played(false)
-/*
-		requestWakeLock()
-		setTimeout(() => {
-				releaseWakeLock()
-				}, 3 * 60 * 1000)
-*/
+    setChess(_ => { moveFixCastling(_, move); return _ })
   }
 
-  const moves_pgn = createMemo(() => {
-    let chess = new Chess()
-    moves().forEach(_ => moveFixCastling(chess, _))
-    return chess.pgn()
-      })
-  
-
   const onAnalyseOnLichess = () => {
-
-    let pgn = moves_pgn()
+    let pgn = m_pgn()
 
     let formData = new FormData()
     formData.append('pgn', pgn)
@@ -114,117 +174,28 @@ export default () => {
       .then(_ => _.json())
       .then(_ => {
           let url = _["url"];
-          window.open(`${url}/${side}#${moves().length}`, '_blank')
+          window.open(`${url}/${side}#${m_steps().length}`, '_blank')
           });  
   }
 
-  const wc = (cp: number) => {
-    let M = -0.00368208
-    let res =  50 + 50 * (2/ (1 + Math.exp(-M * cp)) - 1)
-    return res
-  }
-
-  let [glyph, set_glyph] = createSignal<string | undefined>(undefined, { equals: false })
-  let [cp_delta, set_cp_delta] = createSignal(0, { equals: false})
-
-  createEffect(on(ai_cp, (cp, pre_cp) => {
-    if (pre_cp) {
-    set_cp_delta((wc(cp * 100) - wc(pre_cp * 100)) * (isBlack ? -1 : 1))
-    }
-    }))
-
-  createEffect(on(cp_delta, cp_delta => {
-    if (Math.abs(cp_delta) < 10) {
-       set_glyph('!')
-return
-    }
-    if (cp_delta < -30) {
-      set_glyph('??')
-    } else if (cp_delta < -20) {
-      set_glyph('?!')
-    } else if (cp_delta < -10) {
-      set_glyph('?')
-      } else {
-set_glyph(undefined)
-}
-      }))
-
-  let [ground_glyph, set_ground_glyph] = createSignal<any | undefined>(undefined)
-  createEffect(on(glyph, glyph => {
-     if (glyph) {
-       let ss = steps()
-       if (ss.length > 0) {
-       let orig = ss[ss.length-1].uci.slice(2)
-
-       set_ground_glyph({ orig, glyph })
-       } else {
-       set_ground_glyph()
-       }
-     } else {
-set_ground_glyph()
-}
-        }))
-
-  createEffect(() => {
-    let _ = ai_cp()
-    if (isBlack) {
-       _ *= -1
-    }
-    if (_ > 2.1) {
-      set_game_over(true)
-      }
-    })
-
-  createEffect(() => {
-   if (game_over()) {
-  if ($replay_ref) {
-         $replay_ref.scrollTo(0, $replay_ref.scrollHeight)
-         }
-         }
-         })
-
-
-  createEffect(on(game_over, v => {
-        if (v) {
-        let result = {
-          moves: moves(),
-          color: isBlack ? 'black' : 'white'
-          }
-
-      Challenges.check_challenge_game(result, pack)
-      }
-  }))
-
 
   const rematch = () => {
-  
-    batch(() => {
-        set_game_over(false)
-        setMoves([])
-        set_ai_played(false)
-        set_ai_cp(0)
-        set_cp_delta(0)
-        set_glyph(undefined)
-        set_ground_glyph(undefined)
-
-        if (isBlack) {
-        ceval.start('', [])
-        }
-        })
+    set_game_over(false)
+    setChess(new Chess())
   }
 
   return (<>
     <Title> aidchess.com - Hardcore Chess </Title>
     <div class='hardcore'>
       <div class='board'>
-      <Ground glyph={ground_glyph()} fen={fen()} isBlack={isBlack} onUserMove={onUserMove}/>
+      <Ground glyphs={m_ground_glyphs()} fen={m_fen()} isBlack={isBlack} onUserMove={onUserMove}/>
       </div>
       <div class='table'>
       <div class='ceval'>
-        {-ai_cp()}
+        {-m_ai_cp()}
       </div>
       <div ref={_ => $replay_ref = _} class='replay'>
-        <Replay steps={steps()}/>
+        <Replay steps={m_steps()}/>
         <Show when={game_over()}>
         <div class='result-wrap'>
            <div class='result'>{game_score()}</div>

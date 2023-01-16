@@ -27,10 +27,12 @@
   }
 }
 
-.packs {
+
+.packs, .generations {
   display: flex;
   flex-flow: row wrap;
-  .pack {
+
+  .pack, .generation {
     color: $lightblue;
     user-select: none;
     cursor: pointer;
@@ -39,6 +41,11 @@
 
     & .selected {
       border-bottom: 2px solid $orange;
+    }
+
+    & .disabled {
+      color: $gray;
+      opacity: 0.2;
     }
 
     .color {
@@ -71,4 +78,8 @@
       color: red;
     }
   }
+}
+
+.pack-name {
+  color: $pink;
 }

@@ -70,7 +70,23 @@ const MainPage = () => {
                </div>
             }</For>
             </div>
-            <h3>{selected_pack_name()}</h3>
+            <h3 class='pack-name'>{selected_pack_name()}</h3>
+            <h4> Select a generation </h4>
+            <small> You can select a generation when it's unlocked </small>
+            <div class='generations'>
+               <div class='generation'>
+                 <span class={'primary selected'}>G0 50/50</span>
+               </div>
+               <div class='generation'>
+                 <span class={'primary'}>G1 10/20</span>
+               </div>
+               <div class='generation'>
+                 <span class={'primary disabled'}>G2 1/5</span>
+               </div>
+               <div class='generation'>
+                 <span class={'primary disabled'}>G3 0/15</span>
+               </div>
+            </div>
             <button onClick={() => play() } class='fbt primary'> Start Game </button>
             <div class='challenges'>
               <h3> Challenges </h3>
