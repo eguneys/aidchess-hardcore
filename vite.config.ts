@@ -5,6 +5,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 export default defineConfig({
   base: './',
   plugins: [
+    /*
     VitePWA({ 
       devOptions: {
         enabled: false
@@ -25,6 +26,7 @@ export default defineConfig({
         type: 'image/png'
       }]
     } }),
+   */
     solidPlugin({ hot : false }) 
   ]
 })
