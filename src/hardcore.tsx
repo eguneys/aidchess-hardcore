@@ -6,6 +6,43 @@ import { Step } from './ceval/types'
 import CevalCtrl from './ceval/ctrl'
 import { Title } from '@solidjs/meta'
 
+const wakelocky = (() => {
+  // The wake lock sentinel.
+  let wakeLock: any = null;
+
+  // Function that attempts to request a wake lock.
+  const requestWakeLock = async () => {
+    try {
+      wakeLock = await (navigator as any).wakeLock.request('screen');
+      wakeLock.addEventListener('release', () => {
+          //console.log('Wake Lock was released');
+          });
+      //console.log('Wake Lock is active');
+    } catch (err) {
+      //console.error(`${err.name}, ${err.message}`);
+    }
+  }; 
+	// Function that attempts to release the wake lock.
+	const releaseWakeLock = async () => {
+		if (!wakeLock) {
+			return;
+		}
+		try {
+			await wakeLock.release();
+			wakeLock = null;
+		} catch (err) {
+			//console.error(`${err.name}, ${err.message}`);
+		}
+	};
+
+  return {
+   requestWakeLock,
+	releaseWakeLock
+	}
+})()
+
+let { requestWakeLock, releaseWakeLock } = wakelocky
+
 const moveFixCastling = (chess: any, move: any) => {
   return chess.move(move, { sloppy: true}) || chess.move('O-O') || chess.move('O-O-O')
 }
@@ -72,6 +109,10 @@ export default () => {
     setMoves(_ => { _.push(move); return _ })
     ceval.start('', steps())
     set_ai_played(false)
+		requestWakeLock()
+		setTimeout(() => {
+				releaseWakeLock()
+				}, 3 * 60 * 1000)
   }
 
   const wc = (cp: number) => {
