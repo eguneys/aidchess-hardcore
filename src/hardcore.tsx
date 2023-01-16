@@ -109,10 +109,12 @@ export default () => {
     setMoves(_ => { _.push(move); return _ })
     ceval.start('', steps())
     set_ai_played(false)
+/*
 		requestWakeLock()
 		setTimeout(() => {
 				releaseWakeLock()
 				}, 3 * 60 * 1000)
+*/
   }
 
   const wc = (cp: number) => {
