@@ -19,6 +19,14 @@ const challenges = [
   key: 'black20',
   description: 'Get to 20 moves with Black'
 },
+  {
+  key: 'white30',
+  description: 'Get to 30 moves with White'
+}, {
+  key: 'black30',
+  description: 'Get to 30 moves with Black'
+},
+
  {
   key: 'white40',
   description: 'Get to 40 moves with White'
@@ -77,6 +85,12 @@ class Challenges {
         this.complete('white40')
       } else {
         this.complete('black40')
+      }
+    } else if (game.moves.length >= 60) {
+      if (game.color === 'white') {
+        this.complete('white30')
+      } else {
+        this.complete('black30')
       }
     } else if (game.moves.length >= 40) {
       if (game.color === 'white') {
