@@ -98,7 +98,7 @@ return undefined
 
   const ai_cp = (fen: string) => {
     const e = evals_by_fen().get(fen)
-      if (!e || !e.cp) { return 0 }
+      if (!e || !e.cp || e.depth < 10) { return 0 }
     return e.cp / 100
   }
   const m_ai_cp = createMemo(() => ai_cp(m_fen()))
@@ -134,7 +134,7 @@ return undefined
   function step() {
 
     const e = evals_by_fen().get(m_fen())
-    if (e) {
+    if (!game_over() && e) {
       if (m_turn() === ai_color[0]) {
         if (e.depth >= level) {
           let move = e.pvs[0].moves[0]
