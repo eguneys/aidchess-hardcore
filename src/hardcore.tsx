@@ -1,47 +1,11 @@
 import './hardcore.scss'
 import { on, batch, Show, For, createEffect, createMemo, createSignal } from 'solid-js'
+import { useSearchParams } from '@solidjs/router'
 import { Ground } from './ground'
 import { Chess } from 'chess.js'
 import { Step } from './ceval/types'
 import CevalCtrl from './ceval/ctrl'
 import { Title } from '@solidjs/meta'
-
-const wakelocky = (() => {
-  // The wake lock sentinel.
-  let wakeLock: any = null;
-
-  // Function that attempts to request a wake lock.
-  const requestWakeLock = async () => {
-    try {
-      wakeLock = await (navigator as any).wakeLock.request('screen');
-      wakeLock.addEventListener('release', () => {
-          //console.log('Wake Lock was released');
-          });
-      //console.log('Wake Lock is active');
-    } catch (err) {
-      //console.error(`${err.name}, ${err.message}`);
-    }
-  }; 
-	// Function that attempts to release the wake lock.
-	const releaseWakeLock = async () => {
-		if (!wakeLock) {
-			return;
-		}
-		try {
-			await wakeLock.release();
-			wakeLock = null;
-		} catch (err) {
-			//console.error(`${err.name}, ${err.message}`);
-		}
-	};
-
-  return {
-   requestWakeLock,
-	releaseWakeLock
-	}
-})()
-
-let { requestWakeLock, releaseWakeLock } = wakelocky
 
 const moveFixCastling = (chess: any, move: any) => {
   return chess.move(move, { sloppy: true}) || chess.move('O-O') || chess.move('O-O-O')
@@ -49,6 +13,12 @@ const moveFixCastling = (chess: any, move: any) => {
 export type Memo<T> = () => T
 
 export default () => {
+
+  
+  let [params, setParams] = useSearchParams()
+
+  const isBlack = params.color === 'black'
+  
 
   let [game_over, set_game_over] = createSignal(false)
     //let kga = ['e2e4', 'e7e5', 'f2f4', 'e5f4', 'g1f3', 'g7g5', 'h2h4', 'g5g4']
@@ -105,6 +75,10 @@ export default () => {
     return Math.floor(steps().length / 2)
       })
 
+  if (isBlack) {
+    ceval.start('', [])
+  }
+
   const onUserMove = (move: string) => {
     setMoves(_ => { _.push(move); return _ })
     ceval.start('', steps())
@@ -151,7 +125,7 @@ export default () => {
 
   createEffect(on(ai_cp, (cp, pre_cp) => {
     if (pre_cp) {
-    set_cp_delta(wc(cp * 100) - wc(pre_cp * 100))
+    set_cp_delta((wc(cp * 100) - wc(pre_cp * 100)) * (isBlack ? -1 : 1))
     }
     }))
 
@@ -189,6 +163,9 @@ set_ground_glyph()
 
   createEffect(() => {
     let _ = ai_cp()
+    if (isBlack) {
+       _ *= -1
+    }
     if (_ > 2.1) {
       set_game_over(true)
       }
@@ -203,7 +180,7 @@ set_ground_glyph()
          })
 
   const rematch = () => {
-   
+  
     batch(() => {
         set_game_over(false)
         setMoves([])
@@ -212,6 +189,10 @@ set_ground_glyph()
         set_cp_delta(0)
         set_glyph(undefined)
         set_ground_glyph(undefined)
+
+        if (isBlack) {
+        ceval.start('', [])
+        }
         })
   }
 
@@ -219,7 +200,7 @@ set_ground_glyph()
     <Title> aidchess.com - Hardcore Chess </Title>
     <div class='hardcore'>
       <div class='board'>
-      <Ground glyph={ground_glyph()} fen={fen()} onUserMove={onUserMove}/>
+      <Ground glyph={ground_glyph()} fen={fen()} isBlack={isBlack} onUserMove={onUserMove}/>
       </div>
       <div class='table'>
       <div class='ceval'>

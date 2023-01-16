@@ -10,8 +10,8 @@ const MainPage = () => {
   const navigate = useNavigate()
 
 
-  const play = (state: number) => {
-    navigate(`/hardcore?level=${state}`, { replace: true })
+  const play = (state: number, color?: string) => {
+    navigate(`/hardcore?level=${state}` + (color ? `&color=${color}` : ''), { replace: true })
   }
 
   return (<>
@@ -27,10 +27,10 @@ const MainPage = () => {
             <h2>Beat stockfish 8 the hard way.</h2>
             <span>Play hardcore chess, where you can restart at your first mistake, and build an opening repertoire.</span>
             <div class='pack'>
-              <button class='primary' onClick={() => { play(7) }}>Stockfish 7</button>
+              <button class='primary' onClick={() => { play(7) }}>White Stockfish 7</button>
             </div>
             <div class='pack'>
-              <button class='primary' onClick={() => { play(8) }}>Stockfish 8</button>
+              <button class='primary' onClick={() => { play(7, 'black') }}>Black Stockfish 7</button>
             </div>
           </div>
        </div>

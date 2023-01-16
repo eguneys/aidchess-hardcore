@@ -5,7 +5,7 @@ import { Api as ChessgroundApi } from 'chessground/api'
 import { Chess } from 'chess.js'
 
 
-export const Ground = (props: { glyph?: { orig: string, glyph: string }, fen: string, onUserMove: (move: string) => void }) => {
+export const Ground = (props: { glyph?: { orig: string, glyph: string }, fen: string, isBlack?: boolean, onUserMove: (move: string) => void }) => {
 
   let [mounted, set_mounted] = createSignal(undefined, { equals: false })
   let api: ChessgroundApi
@@ -40,6 +40,7 @@ export const Ground = (props: { glyph?: { orig: string, glyph: string }, fen: st
    }))
 
   let config = {
+    orientation: props.isBlack ? 'black': 'white',
     movable: {
       free: false,
       dests

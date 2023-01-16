@@ -1,6 +1,8 @@
 import { Step, Work } from './types'
 import { ThreadedWasmWorker } from './worker'
 
+const initial_fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+
 export function sanIrreversible(san: string): boolean {
   if (san.startsWith('O-O')) return true;
   if (san.includes('x')) return true;
@@ -108,11 +110,11 @@ export default class CevalCtrl {
       threads: 1,
       hashSize: this.hashSize(),
       stopRequested: false,
-      initialFen: steps[0].fen,
+      initialFen: steps[0]?.fen || initial_fen,
       moves: [],
-      currentFen: step.fen,
+      currentFen: step?.fen || initial_fen,
       path,
-      ply: step.ply,
+      ply: step?.ply || 0,
       maxDepth,
       multiPv: 2,
       threatMode: false,
