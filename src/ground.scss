@@ -18,3 +18,8 @@ cg-board {
   background-image: url('/vendor/chessboard23/blue3.jpg');
   background-size: cover;
 }
+
+
+cg-container .cg-custom-svgs svg {
+  overflow: visible;
+}

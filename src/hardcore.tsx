@@ -1,9 +1,10 @@
 import './hardcore.scss'
-import { batch, Show, For, createEffect, createMemo, createSignal } from 'solid-js'
+import { on, batch, Show, For, createEffect, createMemo, createSignal } from 'solid-js'
 import { Ground } from './ground'
 import { Chess } from 'chess.js'
 import { Step } from './ceval/types'
 import CevalCtrl from './ceval/ctrl'
+import { Title } from '@solidjs/meta'
 
 const moveFixCastling = (chess: any, move: any) => {
   return chess.move(move, { sloppy: true}) || chess.move('O-O') || chess.move('O-O-O')
@@ -26,14 +27,14 @@ export default () => {
          if (fen() !== e.fen) {
            return
          }
+
        ceval.stop()
        set_ai_played(true)
        let best_move = e.pvs[0].moves[0]
-       let cp = e.pvs[0].cp
 
-       if (cp) {
-           set_ai_cp(-cp/100)
-         }
+       if (e.cp) {
+         set_ai_cp(e.cp/100)
+       }
        setMoves(_ => { _.push(best_move); return _})
        if ($replay_ref) {
        $replay_ref.scrollTo(0, $replay_ref.scrollHeight)
@@ -73,9 +74,56 @@ export default () => {
     set_ai_played(false)
   }
 
+  const wc = (cp: number) => {
+    let M = -0.00368208
+    let res =  50 + 50 * (2/ (1 + Math.exp(-M * cp)) - 1)
+    return res
+  }
+
+  let [glyph, set_glyph] = createSignal<string | undefined>(undefined, { equals: false })
+  let [cp_delta, set_cp_delta] = createSignal(0, { equals: false})
+
+  createEffect(on(ai_cp, (cp, pre_cp) => {
+    if (pre_cp) {
+    set_cp_delta(wc(cp * 100) - wc(pre_cp * 100))
+    }
+    }))
+
+  createEffect(on(cp_delta, cp_delta => {
+    if (Math.abs(cp_delta) < 10) {
+       set_glyph('!')
+return
+    }
+    if (cp_delta < -30) {
+      set_glyph('??')
+    } else if (cp_delta < -20) {
+      set_glyph('?!')
+    } else if (cp_delta < -10) {
+      set_glyph('?')
+      } else {
+set_glyph(undefined)
+}
+      }))
+
+  let [ground_glyph, set_ground_glyph] = createSignal<any | undefined>(undefined)
+  createEffect(on(glyph, glyph => {
+     if (glyph) {
+       let ss = steps()
+       if (ss.length > 0) {
+       let orig = ss[ss.length-1].uci.slice(2)
+
+       set_ground_glyph({ orig, glyph })
+       } else {
+       set_ground_glyph()
+       }
+     } else {
+set_ground_glyph()
+}
+        }))
+
   createEffect(() => {
     let _ = ai_cp()
-    if (_ < -2.1) {
+    if (_ > 2.1) {
       set_game_over(true)
       }
     })
@@ -95,17 +143,21 @@ export default () => {
         setMoves([])
         set_ai_played(false)
         set_ai_cp(0)
+        set_cp_delta(0)
+        set_glyph(undefined)
+        set_ground_glyph(undefined)
         })
   }
 
   return (<>
+    <Title> aidchess.com - Hardcore Chess </Title>
     <div class='hardcore'>
       <div class='board'>
-      <Ground fen={fen()} onUserMove={onUserMove}/>
+      <Ground glyph={ground_glyph()} fen={fen()} onUserMove={onUserMove}/>
       </div>
       <div class='table'>
       <div class='ceval'>
-        {ai_cp()}
+        {-ai_cp()}
       </div>
       <div ref={_ => $replay_ref = _} class='replay'>
         <Replay steps={steps()}/>
