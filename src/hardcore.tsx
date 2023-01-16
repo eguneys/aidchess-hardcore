@@ -117,6 +117,29 @@ export default () => {
 */
   }
 
+  const moves_pgn = createMemo(() => {
+    let chess = new Chess()
+    moves().forEach(_ => moveFixCastling(chess, _))
+    return chess.pgn()
+      })
+  
+
+  const onAnalyseOnLichess = () => {
+
+    let pgn = moves_pgn()
+
+    let formData = new FormData()
+    formData.append('pgn', pgn)
+
+    let side = 'white'
+    fetch('https://lichess.org/api/import', { method: 'post', body: formData, })
+      .then(_ => _.json())
+      .then(_ => {
+          let url = _["url"];
+          window.open(`${url}/${side}#${moves().length}`, '_blank')
+          });  
+  }
+
   const wc = (cp: number) => {
     let M = -0.00368208
     let res =  50 + 50 * (2/ (1 + Math.exp(-M * cp)) - 1)
@@ -214,7 +237,8 @@ set_ground_glyph()
       <div class='rcontrols'>
        <div class='follow-up'>
          <Show when={game_over()}>
-           <button onClick={() => rematch()} class='fbt'> Rematch </button>
+           <button onClick={() => onAnalyseOnLichess()} class='fbt'>Analyse on Lichess</button>
+           <button onClick={() => rematch()} class='fbt'>Rematch</button>
          </Show>
        </div>
       </div>
