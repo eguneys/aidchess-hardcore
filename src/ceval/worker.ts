@@ -79,11 +79,11 @@ export class ThreadedWasmWorker {
 
   private async boot(): Promise<Stockfish> {
 
-    let baseUrl = 'http://' + window.location.host + '/vendor/stockfish.wasm/'
+    let baseUrl = 'http://' + window.location.host + '/vendor/stockfish-nnue.wasm/'
 
     if (!import.meta.env.DEV) {
 
-      baseUrl = 'https://' + window.location.host + '/aidchess-hardcore/vendor/stockfish.wasm/'
+      baseUrl = 'https://' + window.location.host + '/aidchess-hardcore/vendor/stockfish-nnue.wasm/'
     }
 
     const wasmPath = baseUrl + 'stockfish.wasm'

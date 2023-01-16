@@ -27,7 +27,7 @@
     "lchessanalysis": "link:../lchessanalysis",
     "solid-js": "^1.6.6",
     "solid-play": "link:../solid-play",
-    "stockfish.js": "^10.0.2",
+    "stockfish-nnue.wasm": "1.0.0-1946a675.smolnet",
     "stockfish.wasm": "^0.10.0"
   }
 }

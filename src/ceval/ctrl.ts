@@ -135,7 +135,7 @@ export default class CevalCtrl {
     if (!this.worker) {
 
       this.worker = new ThreadedWasmWorker({
-        wasmMemory: sharedWasmMemory(1024, this.platform.maxWasmPages(1088))
+        wasmMemory: sharedWasmMemory(2048, this.platform.maxWasmPages(2048))
       })
     }
 
