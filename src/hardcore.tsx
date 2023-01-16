@@ -34,7 +34,7 @@ export default () => {
   let [ai_cp, set_ai_cp] = createSignal(0)
   let ceval = new CevalCtrl({
      emit(e: Tree.LocalEval) {
-       if (!game_over() && !ai_played() && e.depth >= 10) {
+       if (!game_over() && !ai_played() && e.depth >= level) {
          if (fen() !== e.fen) {
            return
          }
