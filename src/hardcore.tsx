@@ -19,6 +19,9 @@ export default () => {
   let [params, setParams] = useSearchParams()
 
   const isBlack = params.color === 'black'
+  const level = parseInt(params.level)
+  const color = isBlack ? 'black' : 'white'
+  const pack = { level, color }
   
 
   let [game_over, set_game_over] = createSignal(false)
@@ -188,7 +191,7 @@ set_ground_glyph()
           color: isBlack ? 'black' : 'white'
           }
 
-      Challenges.check_challenge_game(result)
+      Challenges.check_challenge_game(result, pack)
       }
   }))
 

@@ -1,4 +1,5 @@
 import { storedJsonProp, StoredJsonProp } from './storage'
+import { ChallengeCompleted } from './challenges'
 
 class _ChallengeStore {
   _key(key: string) {
@@ -13,22 +14,20 @@ class _ChallengeStore {
     this._completed([])
   }
 
-  complete(key: string) {
-    let completed = this.completeds
-    if (!completed.includes(key)) {
-      completed.push(key)
-    }
-    this._completed(completed)
+  complete(completed: ChallengeCompleted) {
+    let completeds = this.completeds
+    completeds.push(completed)
+    this._completed(completeds)
   }
 
   get completeds() {
     return this._completed()
   }
 
-  _completed!: StoredJsonProp<Array<string>>
+  _completed!: StoredJsonProp<Array<ChallengeCompleted>>
 
   constructor() {
-    this._completed = this._prop<Array<string>>('completed', [])
+    this._completed = this._prop<Array<ChallengeCompleted>>('completed', [])
   }
 }
 
