@@ -83,7 +83,7 @@ export class ThreadedWasmWorker {
 
     if (!import.meta.env.DEV) {
 
-      baseUrl = 'https://' + window.location.host + '/aidchess-hardcore/vendor/stockfish-nnue.wasm/'
+      baseUrl = 'https://' + window.location.host + '/vendor/stockfish-nnue.wasm/'
     }
 
     const wasmPath = baseUrl + 'stockfish.wasm'
