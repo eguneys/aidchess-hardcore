@@ -11,13 +11,23 @@ export type GameResult = {
   color: string
 }
 
-const challenges = [{
+const challenges = [
+  {
   key: 'white20',
   description: 'Get to 20 moves with White'
 }, {
   key: 'black20',
   description: 'Get to 20 moves with Black'
-}]
+},
+ {
+  key: 'white40',
+  description: 'Get to 40 moves with White'
+}, {
+  key: 'black40',
+  description: 'Get to 40 moves with Black'
+}
+
+]
 
 const deep_copy = (_: any) => JSON.parse(JSON.stringify(_))
 
@@ -62,7 +72,13 @@ class Challenges {
 
   check_challenge_game = (game: GameResult) => {
 
-    if (game.moves.length >= 20) {
+    if (game.moves.length >= 40) {
+      if (game.color === 'white') {
+        this.complete('white40')
+      } else {
+        this.complete('black40')
+      }
+    } else if (game.moves.length >= 20) {
       if (game.color === 'white') {
         this.complete('white20')
       } else {
