@@ -1,1 +1,0 @@
-.app{display:flex;flex-flow:column}.app .lobby-list li.orange{background:#EE6C4D}.lobby{display:flex}.lobby .side{flex:1}.lobby .app{flex:3}.side .footer{margin-top:1em}.challenges{display:flex;flex-flow:column}.challenges .gray{color:#222}.challenges .clear{margin-top:2em;cursor:pointer;user-select:none;align-self:flex-end}.challenges .clear:hover{color:red}
