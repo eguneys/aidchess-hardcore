@@ -72,13 +72,13 @@ class Challenges {
 
   check_challenge_game = (game: GameResult) => {
 
-    if (game.moves.length >= 40) {
+    if (game.moves.length >= 80) {
       if (game.color === 'white') {
         this.complete('white40')
       } else {
         this.complete('black40')
       }
-    } else if (game.moves.length >= 20) {
+    } else if (game.moves.length >= 40) {
       if (game.color === 'white') {
         this.complete('white20')
       } else {
