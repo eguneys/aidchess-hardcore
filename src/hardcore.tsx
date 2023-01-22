@@ -15,7 +15,10 @@ const wc = (cp: number) => {
 }
 
 
-const get_glyph = (cp_delta: number) => {
+const get_glyph = (cp_delta: number | undefined) => {
+  if (cp_delta === undefined) {
+   return undefined
+  }
   if (Math.abs(cp_delta) < 10) {
     return '!'
   }
@@ -48,6 +51,7 @@ export default () => {
   const pack = { level, color }
   
   const ai_color = color === 'white' ? 'black' : 'white'
+  const turn = color[0]
 
   let [chess, setChess] = createSignal(new Chess(), { equals: false })
 
@@ -64,6 +68,7 @@ export default () => {
          return { 
          ply: i,
          fen: c.fen(),
+         turn: c.turn(),
          uci: move.from + move.to,
          san: move.san }})
      })
@@ -72,7 +77,7 @@ export default () => {
       if (steps.length > 1) {
         return steps[steps.length - 2].fen
       }
-return undefined
+      return undefined
       })
 
   const [evals_by_fen, set_evals_by_fen] = createSignal(new Map<string, Tree.LocalEval>(), { equals: false })
@@ -83,8 +88,8 @@ return undefined
         set_evals_by_fen(_ => { _.set(e.fen, e); return _ })
       }
       }})
-  createEffect(on(m_steps, steps => {
-    ceval.start('', steps)
+  createEffect(on(m_fen, fen => {
+    ceval.start('', m_steps())
     }))
 
   createEffect(() => {
@@ -98,15 +103,17 @@ return undefined
 
   const ai_cp = (fen: string) => {
     const e = evals_by_fen().get(fen)
-      if (!e || !e.cp || e.depth < 10) { return 0 }
+    if (!e || !e.cp || e.depth < level) { return undefined }
     return e.cp / 100
   }
-  const m_ai_cp = createMemo(() => ai_cp(m_fen()))
+  const m_ai_cp = createMemo(() => ai_cp(m_fen()) || 0)
 
   const get_cp_delta = (fen: string, prev_fen: string) => {
     const m_ai_cp =  ai_cp(fen)
     const m_prev_ai_cp = ai_cp(prev_fen)
-
+    if (m_ai_cp === undefined || m_prev_ai_cp === undefined) {
+      return undefined
+    }
     return (wc(m_ai_cp * 100) - wc(m_prev_ai_cp * 100)) * (isBlack ? - 1 : 1)
   }
 
@@ -119,10 +126,10 @@ return undefined
     let glyph1 = get_glyph(get_cp_delta(two.fen, one.fen)),
     glyph2 = get_glyph(get_cp_delta(three.fen, two.fen))
     let res = []
-    if (glyph1) {
+    if (one.turn === turn && glyph1) {
       res.push({ orig: two.uci.slice(2), glyph: glyph1 })
     }
-    if (glyph2) {
+    if (two.turn === turn && glyph2) {
       res.push({ orig: three.uci.slice(2), glyph: glyph2 })
     }
     return res
@@ -137,8 +144,13 @@ return undefined
     if (!game_over() && e) {
       if (m_turn() === ai_color[0]) {
         if (e.depth >= level) {
-          let move = e.pvs[0].moves[0]
-            setChess(_ => { moveFixCastling(_, move); return _ })
+          let ai_cp = isBlack ? m_ai_cp() : -m_ai_cp()
+          if (ai_cp < -2.1) {
+            set_game_over(true)
+          } else {
+            let move = e.pvs[0].moves[0]
+              setChess(_ => { moveFixCastling(_, move); return _ })
+          }
         }
       }
     }
@@ -146,14 +158,6 @@ return undefined
     setTimeout(step, 500)
   }
   setTimeout(step, 500)
-
-
-  createEffect(() => {
-     let ai_cp = isBlack ? m_ai_cp() : -m_ai_cp()
-     if (ai_cp < -2.1) {
-       set_game_over(true)
-     }
-     })
 
   const game_score = createMemo(() => {
       return Math.floor(m_steps().length / 2)
