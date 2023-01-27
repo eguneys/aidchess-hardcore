@@ -188,6 +188,17 @@ export default () => {
     setChess(new Chess())
   }
 
+
+  createEffect(on(game_over, (v) => {
+        if (v) {
+        let result = {
+        moves: m_steps().map(_ => _.uci),
+        color
+        }
+      Challenges.check_challenge_game(result, pack)
+        }
+        }))
+
   return (<>
     <Title> aidchess.com - Hardcore Chess </Title>
     <div class='hardcore'>
