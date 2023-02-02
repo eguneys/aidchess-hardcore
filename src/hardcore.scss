@@ -14,72 +14,74 @@
   }
 }
 
-.table {
-  display: flex;
-  flex-flow: column;
-
-  .ceval {
-    color: #bababa;
-    background: hsl(37deg, 7%, 22%);
-    flex: 0 0 36px;
-    
-    line-height: 38px;
-    font-size: 1.6em;
-    text-align: center;
-    font-weight: bold;
-  }
-  .replay {
-
-    user-select: none;
-    cursor: pointer;
-    flex: 1;
-
-    max-height: 50vh;
-    overflow-y: auto;
-  }
-}
-
-.replay {
-  
-  box-sizing: border-box;
-  background: #2c2c2c;
-  display: flex;
-  flex-flow: row wrap;
-  align-items: center;
-  align-content: flex-start;
-  color: $gray;
-  line-height: 1.7;
-  font-size: 1.1em;
-
-  .index {
+.hardcore {
+  .table {
     display: flex;
-    justify-content: center;
-    background: #1e1e12;
-    flex: 0 0 16.666%;
-  }
-  .move {
-    padding-left: 0.7em;
-    flex: 0 0 41.666%;
-  }
+    flex-flow: column;
 
-  .result-wrap {
-    text-align: center;
+    .ceval {
+      color: #bababa;
+      background: hsl(37deg, 7%, 22%);
+      flex: 0 0 36px;
 
-    .result {
-      border-top: 1px solid #404040;
+      line-height: 38px;
+      font-size: 1.6em;
+      text-align: center;
       font-weight: bold;
-      font-size: 1.2em;
-      padding: 5px 0 3px 0;
+    }
+    .replay {
+
+      user-select: none;
+      cursor: pointer;
+      flex: 1;
+
+      max-height: 50vh;
+      overflow-y: auto;
     }
   }
-}
 
+  .replay {
 
-.table {
-  .rcontrols {
-    .follow-up {
+    box-sizing: border-box;
+    background: #2c2c2c;
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    align-content: flex-start;
+    color: $gray;
+    line-height: 1.7;
+    font-size: 1.1em;
+
+    .index {
       display: flex;
-      flex-flow: column;
+      justify-content: center;
+      background: #1e1e12;
+      flex: 0 0 16.666%;
+    }
+    .move {
+      padding-left: 0.7em;
+      flex: 0 0 41.666%;
+    }
+
+    .result-wrap {
+      text-align: center;
+
+      .result {
+        border-top: 1px solid #404040;
+        font-weight: bold;
+        font-size: 1.2em;
+        padding: 5px 0 3px 0;
+      }
+    }
+  }
+
+
+  .table {
+    .rcontrols {
+      .follow-up {
+        display: flex;
+        flex-flow: column;
+      }
     }
   }
 }

@@ -8,6 +8,7 @@ specifiers:
   chess.js: 1.0.0-alpha.0
   chessboard23: link:../chessboard23
   chessground: ^8.3.6
+  chessreplay23: link:../chessreplay23
   lchessanalysis: link:../lchessanalysis
   sass: ^1.57.1
   solid-js: ^1.6.6
@@ -25,6 +26,7 @@ dependencies:
   chess.js: 1.0.0-alpha.0
   chessboard23: link:../chessboard23
   chessground: 8.3.6
+  chessreplay23: link:../chessreplay23
   lchessanalysis: link:../lchessanalysis
   solid-js: 1.6.6
   solid-play: link:../solid-play

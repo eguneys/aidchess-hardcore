@@ -1,3 +1,4 @@
+import './base.scss'
 import { createSignal, createEffect, on } from 'solid-js'
 import { hashIntegration, useNavigate, Router, Routes, Route, A} from '@solidjs/router'
 import { lazy } from 'solid-js'
@@ -7,6 +8,7 @@ import { MetaProvider } from '@solidjs/meta'
 const About = lazy(() => import('./about'))
 const MainPage = lazy(() => import('./home'))
 const Hardcore = lazy(() => import('./hardcore'))
+const Predict = lazy(() => import('./predict'))
 
 type Redirect = { redirect: string }
 
@@ -38,6 +40,7 @@ const AppInRouter = () => {
               <Route path="/" component={MainPage}/>
               <Route path="/about" component={About}/>
               <Route path="/hardcore" component={Hardcore}/>
+              <Route path="/predict" component={Predict}/>
             </Routes>
           </div>
         </div>

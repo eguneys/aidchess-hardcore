@@ -8,6 +8,7 @@ declare namespace Tree {
     moves: string[],
     mate?: number;
     cp?: number;
+    depth: number;
   }
 
   interface ClientEvalBase {

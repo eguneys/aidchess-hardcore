@@ -5,7 +5,7 @@ import { Api as ChessgroundApi } from 'chessground/api'
 import { Chess } from 'chess.js'
 
 
-export const Ground = (props: { glyphs: { orig: string, glyph: string }[], fen: string, isBlack?: boolean, onUserMove: (move: string) => void }) => {
+export const Ground = (props: { glyphs: { orig: string, glyph: string }[], fen: string, isBlack?: boolean, onUserMove?: (move: string) => void }) => {
 
   let [mounted, set_mounted] = createSignal(undefined, { equals: false })
   let api: ChessgroundApi
@@ -24,7 +24,7 @@ export const Ground = (props: { glyphs: { orig: string, glyph: string }[], fen: 
 
   let dests: any = new Map()
     createEffect(on(() => { mounted(); return props.fen }, fen => {
-          if (!fen) {
+          if (!api || !fen) {
           return 
           }
         dests = new Map()
@@ -40,6 +40,7 @@ export const Ground = (props: { glyphs: { orig: string, glyph: string }[], fen: 
    }))
 
   let config = {
+    viewOnly: !props.onUserMove,
     orientation: (props.isBlack ? 'black': 'white') as any,
     movable: {
       free: false,
@@ -47,7 +48,7 @@ export const Ground = (props: { glyphs: { orig: string, glyph: string }[], fen: 
     },
     events: {
       move(orig: string, dest: string) {
-        props.onUserMove(orig+dest)
+        props.onUserMove?.(orig+dest)
       }
     }
   }
