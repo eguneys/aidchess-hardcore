@@ -28,22 +28,65 @@ fallback={
 const GameStart = () => {
 
   const [path, set_path] = createSignal('')
+  const [base_replay, set_base_replay] = createSignal(ReplayTree.make(), { equals: false })
   const [replay, set_replay] = createSignal(ReplayStore.get_replay(), { equals: false })
 
-  setTimeout(() => {
-  
-  const replay_ai = ReplayAi.make(
-      () => {},
-      () => { 
-      let diff = ReplayTree.diff_trees(replay(), replay_ai.root) 
+   const [comparing, set_comparing] = createSignal(false)
+    const onCompare = () => {
 
-      console.log(diff)
-      })
-}, 0)
+      set_comparing(true)
+      const replay_ai = ReplayAi.make(
+          base_replay(),
+          () => {},
+          () => { 
+          let [extra, missing] = ReplayTree.diff_trees(replay(), replay_ai.root) 
+          let white_extra = extra.filter(_ => _.length % 4 === 2)
+          let black_extra = extra.filter(_ => _.length % 4 === 0)
+          let white_missing = missing.filter(_ => _.length % 4 === 0)
+
+          set_replay(_ => {
+              black_extra.forEach(e => _.delete_path(e))
+              return _
+              })
+
+          set_replay(_ => {
+              white_missing.forEach(e => {
+                  let node = replay_ai.root.node_at_path(e)!
+                  _.add_move(init(e), node.uci!)
+                  })
+              return _
+              })
+
+          set_base_replay(replay().clone)
+
+          set_base_replay(_ => {
+              white_extra.forEach(e => _.delete_children(e))
+              return _
+              })
+
+          set_comparing(false)
+          })
+    }
 
 
   const m_node = createMemo(() => replay().node_at_path(path()))
-  const m_moves = createMemo(() => replay().moves())
+  const m_moves = createMemo(() => {
+      let base_moves = base_replay().moves().map(_ => {
+         let [path, uci, comment] = _.split(' ')
+         comment = `{__base__}`
+         return [path, uci, comment].join(' ')
+          })
+      let moves = replay().moves().filter(_ =>
+          !base_moves.find(b => b.split(' ')[0] === _.split(' ')[0])) 
+      .map(_ => {
+         let [path, uci, comment] = _.split(' ')
+         comment = `{__ghost__}`
+         return [path, uci, comment].join(' ')
+         })
+
+       return [...base_moves, ...moves]
+
+      })
   const m_chess = createMemo(() => replay().chess(path()))
   const m_fen = createMemo(() => replay().fen(path()))
 
@@ -103,6 +146,13 @@ const GameStart = () => {
         </div>
         <div class='controls'>
           <button onClick={onDeleteVariation}>Delete variation</button>
+        </div>
+        <div class='action'>
+          <Show when={comparing()} fallback={
+          <button onClick={onCompare} class='primary'>Compare AI</button>
+}>
+  Comparing...
+</Show>
         </div>
         </div>
     </div>

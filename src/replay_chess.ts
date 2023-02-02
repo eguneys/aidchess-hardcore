@@ -41,8 +41,8 @@ export class ReplayTree {
     })
 
 
-    let shortest_extra = []
-    let shortest_missing = []
+    let shortest_extra: Array<Path> = []
+    let shortest_missing: Array<Path> = []
 
     extra.forEach(e => {
       if (!extra.find(_ => _.length < e.length && e.startsWith(_))) {
@@ -74,6 +74,12 @@ export class ReplayTree {
 
   get flat_export() {
     return FlatTree.apply(this.root)
+  }
+
+  get clone() {
+    let res = new ReplayTree()
+    res.root = this.root.clone
+    return res
   }
 
   root!: Node
@@ -114,6 +120,10 @@ export class ReplayTree {
     let fen = chess.fen() as Fen
     let new_node = Node.make_branch(fen, move as any, comment)
     return this.root.add_node(new_node, path)
+  }
+
+  delete_children(path: Path) {
+    this.root.delete_children(path)
   }
 
   delete_path(path: Path) {

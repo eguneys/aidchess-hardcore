@@ -32,6 +32,15 @@
     max-height: 50vh;
     height: 50vh;
     padding: 0.5em;
+
+
+    .moves {
+      .base {
+        color: #ccc;
+        opacity: 0.6;
+        font-weight: normal;
+      }
+    }
   }
 }
 
@@ -64,19 +73,3 @@
 }
 
 
-
-
-.compare-scene {
-  display: flex;
-  flex-flow: column;
-
-
-  .replays {
-    display: flex;
-    gap: 0.5em;
-
-    .replay {
-      flex: 1;
-    }
-  }
-}

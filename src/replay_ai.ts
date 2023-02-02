@@ -29,13 +29,21 @@ export class ReplayAi {
 
   static ai = new ReplayAi()
   
-  static make = (on_root_changed: () => void, on_crunch_done: () => void) => {
+  static make = (base_replay: ReplayTree, on_root_changed: () => void, on_crunch_done: () => void) => {
 
     let { ai } = ReplayAi
 
-    ai.root = ReplayTree.make()
+    ai.root = base_replay
     ai.nb_crunch = 0
     ai.path_depths = new Map()
+    let base_paths = base_replay.flat_export[1].map(_ => _[0])
+    base_paths.forEach(_ => ai.path_depths.set(_, level))
+    base_replay.root.child_paths
+    .filter(_ => _.length % 4 === 2)
+    .forEach(_ => ai.path_depths.delete(_))
+    if (base_paths.length > 0) {
+      ai.path_depths.set('', level)
+    }
     ai.on_root_changed = on_root_changed
     ai.on_crunch_done = on_crunch_done
 
@@ -69,6 +77,7 @@ export class ReplayAi {
   crunch_one() {
     this.nb_crunch++;
     if (this.nb_crunch === crunch_limit) {
+      ceval.stop()
       this.on_crunch_done()
     }
     if (this.nb_crunch > crunch_limit) { return }
