@@ -1,9 +1,64 @@
 import { Chess } from 'chess.js'
-import { FlatDoc, Fen, Path, init, initial_fen, FlatTree, Node } from 'lchessanalysis'
+import { FlatDoc, Fen, Path, init, last, initial_fen, FlatTree, Node } from 'lchessanalysis'
 
+function longestCommonPrefix(str1: string, str2: string) {
+  let commonPrefix = "";
+  let minLength = Math.min(str1.length, str2.length);
+
+  for (let i = 0; i < minLength; i++) {
+    if (str1[i] !== str2[i]) {
+      break;
+    }
+    commonPrefix += str1[i];
+  }
+
+  return commonPrefix;
+}
 
 export class ReplayTree {
 
+
+  static diff_trees = (w: ReplayTree, b: ReplayTree) => {
+
+    let [w_root, w_children] = w.flat_export
+    let [b_root, b_children] = b.flat_export
+
+    let extra: Array<Path> = []
+    let missing: Array<Path> = []
+
+    w_children.forEach(([path, node]) => {
+
+      if (!b_children.find(_ => _[0] === path)) {
+        extra.push(path)
+      }
+    })
+
+    b_children.forEach(([path, node]) => {
+
+      if (!w_children.find(_ => _[0] === path)) {
+        missing.push(path)
+      }
+    })
+
+
+    let shortest_extra = []
+    let shortest_missing = []
+
+    extra.forEach(e => {
+      if (!extra.find(_ => _.length < e.length && e.startsWith(_))) {
+        shortest_extra.push(e)
+      }
+    })
+
+    missing.forEach(e => {
+      if (!missing.find(_ => _.length < e.length && e.startsWith(_))) {
+        shortest_missing.push(e)
+      }
+    })
+
+
+    return [shortest_extra, shortest_missing]
+  }
   
   static make = () => {
     let res = new ReplayTree()
@@ -59,6 +114,12 @@ export class ReplayTree {
     let fen = chess.fen() as Fen
     let new_node = Node.make_branch(fen, move as any, comment)
     return this.root.add_node(new_node, path)
+  }
+
+  delete_path(path: Path) {
+    let init_path = init(path)
+    let last_path = last(path)
+    this.root.delete_after(init_path, last_path)
   }
 
   delete_variation(path: Path) {
