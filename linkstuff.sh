@@ -21,4 +21,4 @@ cd chessreplay23
 pnpm install
 pnpm build
 pnpm link --dir ./ --global
-
+cd ..
