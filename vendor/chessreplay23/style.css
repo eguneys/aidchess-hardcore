@@ -1,0 +1,81 @@
+.chessreplay {
+  width: 100%;
+  white-space: normal;
+  position: relative;
+  background: #222222;
+  overflow: auto;
+}
+
+.lines {
+  display: block;
+  border-left: 2px solid #404040;
+}
+
+.lines .line {
+  display: block;
+  padding-left: 7px;
+}
+
+.lines .line:before {
+  position: absolute;
+  content: ' ';
+  border-top: 2px solid #404040;
+  margin-top: 0.65em;
+  margin-left: -8px;
+  width: 8px;
+  height: 8px;
+}
+
+.moves .comment {
+  font-size: 0.9em;
+  word-wrap: break-word;
+  color: #bababa;
+  display: inline;
+}
+
+.moves .move {
+   padding: 0.25em 0.2em;
+   white-space: nowrap;
+   font-weight: bold;
+   display: inline-block;
+   cursor: pointer;
+   color: #bababa;
+}
+
+
+.moves .move.on_hi_sub {
+  color: white;
+  box-shadow: 0px 1px 0 0 hsla(0, 70%, 70%, 0.2);
+}
+
+.moves .move.on_hi {
+  background: hsla(30, 20%, 50%, 0.4);
+  color: white;
+  border-radius: 2px;
+}
+
+.moves .move.on_hi .index {
+  color: white;
+}
+.moves .move.hi .index {
+  color: white;
+}
+
+
+.moves .move.hi_sub {
+  color: white;
+  box-shadow: 0px 1px 0 0 hsla(0, 80%, 80%, 0.8);
+}
+
+.moves .move.hi {
+  background: hsla(30, 50%, 50%, 1);
+  color: white;
+  border-radius: 1px;
+}
+.moves .move .index {
+  display: inline;
+  padding-right: 0.2em;
+  line-height: 111.11%;
+  font-size: 90%;
+  color: #999;
+}
