@@ -1,3 +1,4 @@
+cd ..
 git clone https://github.com/eguneys/lchessanalysis
 cd lchessanalysis
 pnpm install
