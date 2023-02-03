@@ -87,6 +87,9 @@ const GameStart = () => {
        return [...base_moves, ...moves]
 
       })
+  createEffect(() => {
+      console.log(m_moves())
+      })
   const m_chess = createMemo(() => replay().chess(path()))
   const m_fen = createMemo(() => replay().fen(path()))
 
@@ -132,6 +135,7 @@ const GameStart = () => {
   make_wheel_from_ref({ on_wheel }, replay_ref)
 
 
+  createEffect(() => console.log(m_moves()))
 
   return (<>
     <div class='opening-prep-scene'>
@@ -173,6 +177,7 @@ const OpeningPrep = (props: OpeningPrepProps) => {
   const m_moves = createMemo(() => replay().moves())
   const m_chess = createMemo(() => replay().chess(path()))
   const m_fen = createMemo(() => replay().fen(path()))
+
 
   const onUserMove = (move: string) => {
     let new_path
