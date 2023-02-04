@@ -82,6 +82,7 @@ export class ReplayAi {
     }
     if (this.nb_crunch > crunch_limit) { return }
 
+    let found_one = false
     Node.breadfirst(this.root.root, (path, node) => {
 
       let depth = this.path_depths.get(path)
@@ -95,12 +96,18 @@ export class ReplayAi {
           san: ''
         }))
 
+        found_one = true
         ceval.start('', steps)
         return true
       }
 
       return false
     })
+
+    if (!found_one) {
+      console.log('here')
+      setTimeout(() => this.on_crunch_done())
+    }
   }
 
   path_depths!: Map<Path, number>

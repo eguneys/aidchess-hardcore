@@ -1,6 +1,10 @@
 import { Chess } from 'chess.js'
 import { FlatDoc, Fen, Path, init, last, initial_fen, FlatTree, Node } from 'lchessanalysis'
 
+const moveFixCastling = (chess: any, move: any) => {
+  return chess.move(move, { sloppy: true}) || chess.move('O-O') || chess.move('O-O-O')
+}
+
 function longestCommonPrefix(str1: string, str2: string) {
   let commonPrefix = "";
   let minLength = Math.min(str1.length, str2.length);
@@ -93,7 +97,7 @@ export class ReplayTree {
     return moves.map(([path, _]) => {
         let [initial, ...moves] = this.root.node_list(path)
         let chess = new Chess(initial.fen)
-        moves.forEach(_ => chess.move(_.uci!, { sloppy: true }))
+        moves.forEach(_ => moveFixCastling(chess, _.uci!))
         let ms = chess.history()
         let san = ms[ms.length - 1]
 
@@ -105,7 +109,7 @@ export class ReplayTree {
     let [initial, ...moves] = this.root.node_list(path)
       
       let chess = new Chess(initial.fen)
-      moves.forEach(_ => chess.move(_.uci!, { sloppy: true }))
+      moves.forEach(_ => moveFixCastling(chess, _.uci!))
       return chess
   }
 
@@ -116,10 +120,14 @@ export class ReplayTree {
 
   add_move(path: Path, move: string, comment?: string) {
     let chess = this.chess(path)
-    chess.move(move, { sloppy: true })
+    moveFixCastling(chess, move)
     let fen = chess.fen() as Fen
     let new_node = Node.make_branch(fen, move as any, comment)
     return this.root.add_node(new_node, path)
+  }
+
+  delete_siblings(path: Path) {
+    this.root.delete_siblings(path)
   }
 
   delete_children(path: Path) {

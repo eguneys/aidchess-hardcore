@@ -40,6 +40,11 @@
         opacity: 0.6;
         font-weight: normal;
       }
+      .base.child {
+        color: $pink;
+        opacity: 1;
+        font-weight: italic;
+      }
     }
   }
 }

@@ -116,7 +116,7 @@ export default class CevalCtrl {
       path,
       ply: step?.ply || 0,
       maxDepth,
-      multiPv: 2,
+      multiPv: 3,
       threatMode: false,
       emit: (ev: Tree.LocalEval) => {
         this.opts.emit(ev, work)

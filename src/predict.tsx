@@ -4,11 +4,13 @@ import { Title } from '@solidjs/meta'
 import { Ground } from './ground'
 import Chessreplay23 from 'chessreplay23'
 import { Chess } from 'chess.js'
-import { init, Path } from 'lchessanalysis'
+import { Color, init, Path } from 'lchessanalysis'
 import { ReplayTree } from './replay_chess'
 import { set_$ref, Ref, make_wheel_from_ref } from 'solid-play'
 import { ReplayStore } from './store'
 import { ReplayAi } from './replay_ai'
+
+const color_path = (path: Path, color: Color) => path.length % 4 === (color === 'w' ? 2 : 0)
 
 export default () => {
 
@@ -71,9 +73,14 @@ const GameStart = () => {
 
   const m_node = createMemo(() => replay().node_at_path(path()))
   const m_moves = createMemo(() => {
+      let r_child_paths = replay().root.child_paths
       let base_moves = base_replay().moves().map(_ => {
          let [path, uci, comment] = _.split(' ')
+         if (r_child_paths.includes(path)) {
+           comment = `{__base child__}`
+         } else {
          comment = `{__base__}`
+         }
          return [path, uci, comment].join(' ')
           })
       let moves = replay().moves().filter(_ =>
@@ -86,9 +93,6 @@ const GameStart = () => {
 
        return [...base_moves, ...moves]
 
-      })
-  createEffect(() => {
-      console.log(m_moves())
       })
   const m_chess = createMemo(() => replay().chess(path()))
   const m_fen = createMemo(() => replay().fen(path()))
@@ -104,18 +108,30 @@ const GameStart = () => {
     }
   }
 
-  const onDeleteVariation = () => {
-    let delete_after
-      set_replay(_ => {
-        delete_after = _.delete_variation(path())
+  const onDeleteMove = () => {
+    let delete_path = path()
+      set_base_replay(_ => {
+        _.delete_path(path())
         return _
         })
-      if (delete_after !== undefined) {
-        set_path(delete_after)
-      }
+      set_replay(_ => {
+        _.delete_path(path())
+        return _
+        })
+    set_path(init(delete_path))
   }
 
-
+  const onDeleteSiblings = () => {
+    let delete_path = path()
+      set_base_replay(_ => {
+        _.delete_siblings(path())
+        return _
+        })
+      set_replay(_ => {
+        _.delete_siblings(path())
+        return _
+        })
+  }
 
   let board_ref = Ref.make
   let replay_ref = Ref.make
@@ -132,10 +148,6 @@ const GameStart = () => {
   }
 
   make_wheel_from_ref({ on_wheel }, board_ref)
-  make_wheel_from_ref({ on_wheel }, replay_ref)
-
-
-  createEffect(() => console.log(m_moves()))
 
   return (<>
     <div class='opening-prep-scene'>
@@ -149,7 +161,8 @@ const GameStart = () => {
           <Chessreplay23 moves={m_moves()} on_path={path()} on_click={_ => set_path(_)}/>
         </div>
         <div class='controls'>
-          <button onClick={onDeleteVariation}>Delete variation</button>
+          <button onClick={onDeleteMove}>Delete move</button>
+          <button onClick={onDeleteSiblings}>Delete Siblings</button>
         </div>
         <div class='action'>
           <Show when={comparing()} fallback={

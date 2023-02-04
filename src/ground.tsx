@@ -15,7 +15,7 @@ export const Ground = (props: { glyphs: { orig: string, glyph: string }[], fen: 
        return
     }
     if (glyphs) {
-      api.setAutoShapes(glyphs.map(glyph => ({ orig: glyph.orig as any, customSvg: glyphToSvg[glyph.glyph] })))
+      api.setAutoShapes(glyphs.map(glyph => ({ orig: glyph.orig as any, customSvg: glyphToSvg[glyph.glyph] })) as any)
     } else {
       api.setAutoShapes([])
     }
