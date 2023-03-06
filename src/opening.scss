@@ -1,0 +1,45 @@
+@import '_variables';
+
+.openings {
+  display: flex;
+  gap: 1.2em;
+
+  .board {
+    max-width: 80vh;
+    flex: 2;
+  }
+
+  .table {
+    flex: 1;
+  }
+}
+
+.replay {
+  user-select: none;
+
+  .chessreplay {
+    min-height: 2em;
+    max-height: 50vh;
+    height: 50vh;
+    padding: 0.5em;
+
+
+    .moves {
+      .move {
+        font-weight: normal;
+      }
+      .base {
+        color: #ccc;
+        opacity: 0.6;
+        font-weight: normal;
+      }
+      .base.child {
+        color: $pink;
+        opacity: 1;
+        font-weight: italic;
+      }
+    }
+  }
+}
+
+

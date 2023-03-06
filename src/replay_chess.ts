@@ -120,9 +120,10 @@ export class ReplayTree {
 
   add_move(path: Path, move: string, comment?: string) {
     let chess = this.chess(path)
-    moveFixCastling(chess, move)
+    let res = moveFixCastling(chess, move)
+    let uci = `${res.from}${res.to}` as any
     let fen = chess.fen() as Fen
-    let new_node = Node.make_branch(fen, move as any, comment)
+    let new_node = Node.make_branch(fen, uci, comment)
     return this.root.add_node(new_node, path)
   }
 

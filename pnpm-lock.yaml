@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@babel/core': ^7.20.12
+  '@mliebelt/pgn-parser': ^1.4.6
   '@solidjs/meta': ^0.28.2
   '@solidjs/router': ^0.6.0
   babel-preset-solid: ^1.6.10
@@ -21,6 +22,7 @@ specifiers:
   vite-plugin-solid: ^2.5.0
 
 dependencies:
+  '@mliebelt/pgn-parser': 1.4.6
   '@solidjs/meta': 0.28.2_solid-js@1.6.10
   '@solidjs/router': 0.6.0_solid-js@1.6.10
   chess.js: 1.0.0-alpha.0
@@ -1495,6 +1497,17 @@ packages:
       '@jridgewell/resolve-uri': 3.1.0
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
+
+  /@mliebelt/pgn-parser/1.4.6:
+    resolution: {integrity: sha512-EvlyWjuRSIyuAWHdh6oFB2vx573uFJamSxcat+yvK6U7+MsDLIhaMmhCGZdAgdZ9feav/WsR7EILbkHawm2bSA==}
+    hasBin: true
+    dependencies:
+      '@mliebelt/pgn-types': 1.0.3
+    dev: false
+
+  /@mliebelt/pgn-types/1.0.3:
+    resolution: {integrity: sha512-PDm/jDwAe7BAFwjTKB5zLjaU4bNSSEpfZ3j2IvRxFmx1Tb7fCk/QyXhlnIy1xBkdd3WD8wT8uoe8OKoeZaon0g==}
+    dev: false
 
   /@nodelib/fs.scandir/2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}

@@ -1,3 +1,4 @@
+declare module 'cm-pgn'
 declare type Fen = string;
 
 declare namespace Tree {
