@@ -11,7 +11,6 @@ import { ReplayTree } from './replay_chess'
 export default () => {
   return (<>
     <Title> aidchess.com - Openings Exercise </Title>
-    <Openings/>
     </>)
 
 }

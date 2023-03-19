@@ -47,3 +47,70 @@ button.primary {
 a {
   text-decoration: none;
 }
+
+
+.replay {
+  user-select: none;
+
+  .chessreplay {
+    min-height: 2em;
+    max-height: 50vh;
+    height: 50vh;
+    padding: 0.5em;
+
+
+    .moves {
+      .move {
+        font-weight: normal;
+      }
+      .base {
+        color: #ccc;
+        opacity: 0.6;
+        font-weight: normal;
+      }
+      .base.child {
+        color: $pink;
+        opacity: 1;
+        font-weight: italic;
+      }
+    }
+  }
+}
+
+@function c-light($color, $value) {
+  @return change-color($color, $lightness: $value);
+}
+
+@function c-dimmer($color, $weight: 20%) {
+  @return mix(#000, $color, $weight);
+}
+
+@function c-clearer($color, $weight: 20%) {
+  @return mix(#fff, $color, $weight);
+}
+
+$c-site-hue: 37;
+
+$c-bg-high: hsl($c-site-hue, 7%, 14%);
+
+$c-font: hsl(0, 0%, 73%);
+
+$c-bg-box: $c-bg-high;
+$c-shade: c-light($c-font, 80%);
+$c-font-dimmer: c-light($c-font, 42%);
+
+
+body ::-webkit-scrollbar,
+body ::-webkit-scrollbar-corner {
+  width: 0.5rem;
+  background: $c-bg-box;
+}
+
+body ::-webkit-scrollbar-thumb {
+  background: $c-shade;
+}
+
+body ::-webkit-scrollbar-thumb:hover,
+body ::-webkit-scrollbar-thumb:active {
+  background: $c-font-dimmer;
+}

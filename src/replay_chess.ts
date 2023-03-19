@@ -64,9 +64,9 @@ export class ReplayTree {
     return [shortest_extra, shortest_missing]
   }
   
-  static make = () => {
+  static make = (fen: Fen = initial_fen) => {
     let res = new ReplayTree()
-    res.root = Node.make_root(initial_fen)
+    res.root = Node.make_root(fen)
     return res
   }
 

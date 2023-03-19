@@ -10,6 +10,7 @@ const MainPage = lazy(() => import('./home'))
 const Hardcore = lazy(() => import('./hardcore'))
 const Predict = lazy(() => import('./predict'))
 const Opening = lazy(() => import('./opening'))
+const Dem = lazy(() => import('./dem/dem'))
 
 type Redirect = { redirect: string }
 
@@ -43,6 +44,7 @@ const AppInRouter = () => {
               <Route path="/hardcore" component={Hardcore}/>
               <Route path="/predict" component={Predict}/>
               <Route path="/openings" component={Opening}/>
+              <Route path="/dem" component={Dem}/>
             </Routes>
           </div>
         </div>

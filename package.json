@@ -22,7 +22,7 @@
     "@mliebelt/pgn-parser": "^1.4.6",
     "@solidjs/meta": "^0.28.2",
     "@solidjs/router": "^0.6.0",
-    "chess.js": "1.0.0-alpha.0",
+    "chess.js": "1.0.0-beta.4",
     "chessboard23": "link:../chessboard23",
     "chessground": "^8.3.7",
     "chessreplay23": "link:../chessreplay23",
