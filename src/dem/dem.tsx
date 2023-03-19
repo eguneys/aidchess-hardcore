@@ -8,6 +8,7 @@ import { set_$ref, Ref, make_wheel_from_ref } from 'solid-play'
 import Chessreplay23 from 'chessreplay23'
 import { Ground } from '../ground'
 import { ReplayTree } from '../replay_chess'
+import { Solves } from './solves'
 
 
 const active = (active: boolean) => active ? 'active' : ''
@@ -41,6 +42,9 @@ export default function DEM() {
 return undefined
     })
 
+
+   const [refresh_completed, set_refresh_completed] = createSignal(undefined, { equals: false })
+
   const [path, set_path] = createSignal('')
   const [replay, set_replay] = createSignal(ReplayTree.make(), { equals: false })
   const m_moves = createMemo(() => replay().moves())
@@ -73,6 +77,15 @@ return undefined
    do_reset()
    }))
 
+  createEffect(() => {
+      let a = active_pgn()
+
+      let s = status()
+      if (a && s === 'solved') {
+      Solves.complete(a.title)
+      set_refresh_completed()
+      }
+      })
 
   const m_active_picker = createMemo(() => {
       const pgn = active_pgn()
@@ -203,6 +216,7 @@ return undefined
         <div onClick={() => set_active_chapter(i())} class={active(i() === active_chapter())}>
         <span>{i()+1}</span>
         <h3>{opgn.title}</h3>
+        <Show when={refresh_completed() || Solves.is_complete(opgn.title)}><span>Completed</span></Show>
         </div>
       }</For>
     </div>
