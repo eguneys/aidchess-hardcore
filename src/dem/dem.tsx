@@ -21,7 +21,11 @@ export default function DEM() {
   let [status, set_status] = createSignal<Status>('loading')
 
 
-  let [resource] = createResource(list[0], match_study)
+  let [active_link, set_active_link] = createSignal(0)
+
+  let m_link = createMemo(() => list[active_link()])
+
+  let [resource] = createResource(() => m_link().link, match_study)
 
   let more_pgn = createMemo(() => {
     let _ = resource()
@@ -66,7 +70,13 @@ return undefined
     batch(() => {
         set_replay(ReplayTree.make(pgn!.fen as any))
         set_path('')
-        set_initial_color(fen_turn(pgn!.fen!))
+        if (pgn.title.match(' pw')) {
+          set_initial_color('w')
+        } else if (pgn.title.match(' pb')) {
+          set_initial_color('b')
+        } else {
+          set_initial_color(fen_turn(pgn!.fen!))
+        }
         })
   }
 
@@ -122,7 +132,9 @@ return undefined
        if (move) {
          do_make_move(move)
        } else {
-         set_status('solved')
+         if (status() !== 'failed') {
+           set_status('solved')
+         }
        }
      }
    }))
@@ -135,12 +147,11 @@ return undefined
       return
     }
 
-    do_make_move(move)
-
     if (!pos.moves.includes(move)) {
       set_status('failed')
-      return
     }
+
+    do_make_move(move)
   }
 
   const do_make_move = (move: string) => {
@@ -210,7 +221,16 @@ return undefined
         <Dynamic component={feedbacks[status()]}/>
       </div>
     </div>
+    <div class='studies'>
+      <For each={list}>{ (link, i) =>
+        <div onClick={() => set_active_link(i())} class={active(i() === active_link())}>
+        <span>{i()+1}</span>
+        <h3>{link.title}</h3>
+        </div>
+      }</For>
+    </div>
     <div class='side'>
+
     <div class='chapters'>
       <For each={more_pgn()}>{(opgn, i) =>
         <div onClick={() => set_active_chapter(i())} class={active(i() === active_chapter())}>

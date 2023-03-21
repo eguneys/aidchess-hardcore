@@ -10,7 +10,7 @@
 
   grid-template-areas:
   'app app'
-  '. side';
+  'studies side';
 
   .board-replay {
     grid-area: app;
@@ -46,6 +46,10 @@
   .side {
     grid-area: side;
   }
+
+  .studies {
+    grid-area: studies;
+  }
 }
 
 
@@ -67,8 +71,9 @@
     }
   }
 
-
-  .chapters {
+  .chapters,
+  .studies {
+    margin: 0.2em;
     background: #262421;
     max-height: 18em;
     overflow: hidden;

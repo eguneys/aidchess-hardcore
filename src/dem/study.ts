@@ -3,7 +3,8 @@ let studyIdReg = /^https:\/\/lichess\.org\/study\/([A-Za-z0-9]{8})$/;
 
 
 export const list = [
-  'https://lichess.org/study/8Bu5aigE'
+  { title: 'Key squares', link: 'https://lichess.org/study/8Bu5aigE' },
+  { title: 'Mined squares', link: 'https://lichess.org/study/GzYzNhAN' },
 ]
 
 export type LoadChapter = {
