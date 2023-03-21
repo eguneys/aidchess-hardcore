@@ -1,1 +1,0 @@
-import{c as e,T as t,f as n}from"./index-099accc5.js";import"./solid-play-4a5fadff.js";import"./util-2d6699b1.js";import"./chess-ece2668e.js";const c=()=>e(t,{children:" aidchess.com - Openings Exercise "});n(["click"]);export{c as default};
