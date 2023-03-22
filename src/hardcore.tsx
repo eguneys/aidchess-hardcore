@@ -35,8 +35,12 @@ const get_glyph = (cp_delta: number | undefined) => {
 
 
 
-const moveFixCastling = (chess: any, move: any) => {
-  return chess.move(move, { sloppy: true}) || chess.move('O-O') || chess.move('O-O-O')
+const moveFixCastling = (chess: any, move: string) => {
+  try { 
+    return chess.move(move)
+  } catch {
+    return chess.move('O-O') || chess.move('O-O-O')
+  } 
 }
 export type Memo<T> = () => T
 
