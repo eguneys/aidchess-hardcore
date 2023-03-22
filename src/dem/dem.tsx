@@ -66,6 +66,9 @@ return undefined
 
   const do_reset = () => {
     const pgn = active_pgn()
+      if (!pgn) {
+        return 
+      }
     set_status('solving')
     batch(() => {
         set_replay(ReplayTree.make(pgn!.fen as any))
