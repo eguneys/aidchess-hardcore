@@ -55,6 +55,7 @@ const MainPage = () => {
           <div class="side">
             <div class='footer'>
               <A href='/about'>About</A>
+              <A href='/dem'>DEM Exercises</A>
             </div>
 
           </div>
